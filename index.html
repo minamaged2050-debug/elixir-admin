@@ -1,29 +1,386 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>صيدليات الإكسير | ELIXIR PHARMACIES</title>
-    <meta name="description" content="صيدليات الإكسير ELIXIR PHARMACIES - منصة طلب وتوصيل الأدوية ومستلزمات الصيدلية السريعة، رفع الروشتات، والمحفظة الرقمية" />
-    <meta name="theme-color" content="#059669" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="الإكسير" />
-    <meta name="application-name" content="صيدليات الإكسير" />
-    <link rel="manifest" href="/manifest.json" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
-    <meta property="og:title" content="صيدليات الإكسير | ELIXIR PHARMACIES" />
-    <meta property="og:description" content="صيدليات الإكسير ELIXIR PHARMACIES - منصة طلب وتوصيل الأدوية ومستلزمات الصيدلية السريعة، رفع الروشتات، والمحفظة الرقمية" />
-    <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  </head>
-  <body class="bg-slate-50 text-slate-900 antialiased selection:bg-emerald-100 selection:text-emerald-900">
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>صيدليات الإكسير | Elixir Pharmacies</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Cairo & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Cairo', 'Inter', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .safe-top { padding-top: env(safe-area-inset-top, 0px); }
+    .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 16px); }
+    ::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col antialiased">
+
+  <!-- Mobile Top Bar: User Profile, Wallet & Cart -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 safe-top shadow-xs">
+    <div class="px-4 py-2.5 flex items-center justify-between gap-2">
+      <!-- Profile Lockup -->
+      <div onclick="openProfileModal()" class="flex items-center gap-2 cursor-pointer">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-700 text-white flex items-center justify-center font-bold text-xs shadow-xs">
+          <i data-lucide="user" class="w-4 h-4"></i>
+        </div>
+        <div class="leading-tight">
+          <span class="text-xs font-black text-slate-900 block" id="header-user-name">د. أحمد محمود</span>
+          <div class="flex items-center gap-2 mt-0.5 text-[10px] font-bold">
+            <span class="text-amber-700 flex items-center gap-0.5"><i data-lucide="sparkles" class="w-3 h-3 fill-amber-500 text-amber-500"></i><span id="header-loyalty-pts">320</span> نقطة</span>
+            <span class="text-emerald-700 flex items-center gap-0.5"><i data-lucide="wallet" class="w-3 h-3 text-emerald-600"></i><span id="header-wallet-bal">145.50</span> ج.م</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="flex items-center gap-1.5">
+        <button onclick="switchRoleToggle()" id="role-badge" class="px-2.5 py-1 rounded-lg bg-slate-900 text-white text-[10px] font-bold">
+          متجر العميل
+        </button>
+        <button onclick="openCartDrawer()" class="relative p-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl transition">
+          <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+          <span id="cart-counter" class="absolute -top-1 -right-1 bg-emerald-600 text-white font-mono text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 1:1 Responsive Tabs (الرئيسية، العروض، فروع الإكسير) -->
+    <div class="px-3 py-1.5 border-t border-slate-100 bg-white">
+      <div class="grid grid-cols-3 gap-1 text-center font-bold text-xs">
+        <button onclick="setTab('home')" id="tab-home" class="tab-btn py-1.5 rounded-xl bg-slate-900 text-white shadow-xs">الرئيسية</button>
+        <button onclick="setTab('deals')" id="tab-deals" class="tab-btn py-1.5 rounded-xl text-rose-600 hover:bg-rose-50 flex items-center justify-center gap-1">
+          <i data-lucide="flame" class="w-3.5 h-3.5 fill-current"></i><span>العروض 🔥</span>
+        </button>
+        <button onclick="setTab('branches')" id="tab-branches" class="tab-btn py-1.5 rounded-xl text-slate-600 hover:bg-slate-100 flex items-center justify-center gap-1">
+          <i data-lucide="building-2" class="w-3.5 h-3.5"></i><span>فروع الإكسير</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- GPS Active Branch & Search -->
+  <div class="px-4 py-2 bg-emerald-50/80 border-b border-emerald-100 text-xs flex items-center justify-between">
+    <div class="flex items-center gap-1.5 text-emerald-950 font-bold">
+      <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-600"></i>
+      <span>التوصيل من: <span id="nearest-branch-name" class="text-emerald-800 underline">صيدليات الإكسير - فرع المعادي</span></span>
+    </div>
+    <span class="text-[10px] bg-emerald-200/70 text-emerald-900 px-2 py-0.5 rounded-full font-bold">20-30 دقيقة ⚡</span>
+  </div>
+
+  <!-- Search Input -->
+  <div class="p-3 bg-white border-b border-slate-100">
+    <div class="relative flex items-center">
+      <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute right-3"></i>
+      <input type="text" id="main-search-input" onkeyup="handleSearch()" placeholder="ابحث باسم الدواء، المادة الفعالة، أو التجميل..." class="w-full bg-slate-100 focus:bg-white text-xs rounded-xl py-2 pr-9 pl-4 border border-slate-200 focus:border-emerald-500 focus:outline-none">
+    </div>
+  </div>
+
+  <!-- Main Scrollable App Content -->
+  <main class="flex-1 overflow-y-auto p-4 space-y-4 pb-24" id="main-container">
+
+    <!-- Quick Services Grid -->
+    <div class="grid grid-cols-4 gap-2 text-center text-[10px] font-bold">
+      <div onclick="openRxModal()" class="p-2.5 bg-white rounded-2xl border border-slate-200 shadow-2xs cursor-pointer active:scale-95 transition">
+        <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 mx-auto mb-1 flex items-center justify-center"><i data-lucide="file-text" class="w-4 h-4"></i></div>
+        <span>صرف روشتة</span>
+      </div>
+      <div onclick="openChatModal()" class="p-2.5 bg-white rounded-2xl border border-slate-200 shadow-2xs cursor-pointer active:scale-95 transition">
+        <div class="w-8 h-8 rounded-xl bg-teal-100 text-teal-700 mx-auto mb-1 flex items-center justify-center"><i data-lucide="message-circle" class="w-4 h-4"></i></div>
+        <span>استشر صيدلي</span>
+      </div>
+      <div onclick="openDoseModal()" class="p-2.5 bg-white rounded-2xl border border-slate-200 shadow-2xs cursor-pointer active:scale-95 transition">
+        <div class="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 mx-auto mb-1 flex items-center justify-center"><i data-lucide="clock" class="w-4 h-4"></i></div>
+        <span>منبه الجرعات</span>
+      </div>
+      <div onclick="openBranchesTab()" class="p-2.5 bg-white rounded-2xl border border-slate-200 shadow-2xs cursor-pointer active:scale-95 transition">
+        <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 mx-auto mb-1 flex items-center justify-center"><i data-lucide="store" class="w-4 h-4"></i></div>
+        <span>الفروع القريبة</span>
+      </div>
+    </div>
+
+    <!-- Products List Section -->
+    <div>
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-black text-slate-900">الأدوية والمستلزمات الطبية المتاحة</h3>
+        <span class="text-[11px] text-slate-500" id="products-count">4 أصناف</span>
+      </div>
+
+      <div class="space-y-3" id="products-list-container">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+
+  </main>
+
+  <!-- COURIER INTERFACE (Toggled when Courier Role is Active) -->
+  <div id="courier-interface" class="hidden flex-1 overflow-y-auto p-4 space-y-4 pb-24">
+    <div class="p-4 bg-slate-900 text-white rounded-2xl shadow-md">
+      <div class="flex items-center justify-between mb-2">
+        <span class="bg-amber-500 text-slate-950 font-black text-[10px] px-2 py-0.5 rounded-full">كابتن إكسير للتوصيل السريع</span>
+        <span class="text-xs font-mono">#ORD-9021</span>
+      </div>
+      <h3 class="text-sm font-black mb-1">الطلب الحالي: توصيل دواء عاجل</h3>
+      <p class="text-xs text-slate-300">العميل: محمود عبد الرازق • المعادي شارع 15</p>
+      <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs">
+        <span class="font-bold text-emerald-400">التحصيل المطلوب: 320.00 ج.م</span>
+        <button onclick="markDelivered()" class="bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded-xl font-bold transition">تأكيد التسليم ✓</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FIXED BOTTOM NAVIGATION BAR -->
+  <nav class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-slate-200 z-40 safe-bottom">
+    <div class="grid grid-cols-5 text-center text-[10px] font-bold py-2">
+      <button onclick="setTab('home')" class="flex flex-col items-center gap-0.5 text-slate-900"><i data-lucide="home" class="w-5 h-5"></i><span>الرئيسية</span></button>
+      <button onclick="openRxModal()" class="flex flex-col items-center gap-0.5 text-slate-500"><i data-lucide="file-text" class="w-5 h-5"></i><span>روشتة</span></button>
+      <button onclick="openChatModal()" class="flex flex-col items-center gap-0.5 text-slate-500"><i data-lucide="message-circle" class="w-5 h-5"></i><span>صيدلي</span></button>
+      <button onclick="openDoseModal()" class="flex flex-col items-center gap-0.5 text-slate-500"><i data-lucide="bell" class="w-5 h-5"></i><span>الجرعات</span></button>
+      <button onclick="openCartDrawer()" class="flex flex-col items-center gap-0.5 text-slate-500"><i data-lucide="shopping-bag" class="w-5 h-5"></i><span>السلة</span></button>
+    </div>
+  </nav>
+
+  <!-- SUBSTITUTES MODAL (متوفر بدائل بنفس الفعالية) -->
+  <div id="substitutes-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white rounded-t-3xl sm:rounded-2xl max-w-md w-full p-5 shadow-2xl border border-slate-200 text-xs">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div>
+          <h4 class="text-sm font-black text-slate-900">البدائل الدوائية المتوفرة بنفس الفعالية</h4>
+          <p class="text-[11px] text-emerald-700 font-bold" id="substitute-original-name">بدائل: بانادول إكسترا</p>
+        </div>
+        <button onclick="closeSubstitutesModal()" class="p-1 rounded-lg text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <div class="py-3 space-y-2.5 max-h-72 overflow-y-auto" id="substitutes-list">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- RX PRESCRIPTION REFILL MODAL -->
+  <div id="rx-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-200 text-xs">
+      <div class="flex items-center justify-between mb-3">
+        <h4 class="text-sm font-black text-slate-900">صرف الروشتة والأدوية المزمنة</h4>
+        <button onclick="closeRxModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <p class="text-slate-500 mb-3">التقط صورة للروشتة أو اخترها من الألبوم وسيقوم صيدلي الإكسير بتجهيزها لك فوراً.</p>
+      
+      <div class="border-2 border-dashed border-emerald-300 rounded-xl p-6 text-center bg-emerald-50/50 mb-3">
+        <i data-lucide="camera" class="w-8 h-8 text-emerald-600 mx-auto mb-1"></i>
+        <span class="block font-bold text-slate-700">اضغط لالتقاط أو رفع الروشتة</span>
+      </div>
+
+      <button onclick="submitRx()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition">إرسال لفرع المعادي للمراجعة</button>
+    </div>
+  </div>
+
+  <!-- LIVE PHARMACIST CHAT MODAL -->
+  <div id="chat-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-4 shadow-2xl border border-slate-200 text-xs flex flex-col h-96">
+      <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold">ص</div>
+          <div>
+            <h4 class="font-bold text-slate-900">د. سارة (صيدلي مرخص - فرع الإكسير)</h4>
+            <span class="text-[9px] text-emerald-600 font-bold">أونلاين الآن • استشارات مجانية</span>
+          </div>
+        </div>
+        <button onclick="closeChatModal()" class="text-slate-400"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto py-3 space-y-2 text-[11px]" id="chat-messages">
+        <div class="bg-slate-100 p-2.5 rounded-xl rounded-tr-none max-w-[85%] text-slate-800">
+          أهلاً بك في صيدليات الإكسير! كيف يمكنني مساعدتك اليوم بخصوص الأدوية أو الجرعات؟
+        </div>
+      </div>
+
+      <div class="pt-2 border-t border-slate-100 flex gap-2">
+        <input type="text" id="chat-input" placeholder="اكتب سؤالك الطبي هنا..." class="flex-1 border border-slate-200 rounded-xl px-3 py-1.5 text-xs focus:outline-none">
+        <button onclick="sendChatMessage()" class="bg-teal-600 text-white px-3 py-1.5 rounded-xl font-bold">إرسال</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Master Product Catalog
+    const PRODUCTS = [
+      {
+        id: 'prod-1',
+        nameAr: 'بانادول إكسترا 500 ملجم',
+        activeIngredient: 'Paracetamol 500mg + Caffeine 65mg',
+        price: 45.0,
+        origin: 'local_medicine',
+        isMarketShortage: false,
+        substitutes: [
+          { nameAr: 'بارامول بلس 500 ملجم', price: 30.0, activeIngredient: 'Paracetamol 500mg + Caffeine 65mg' },
+          { nameAr: 'سيتامول إكسترا', price: 28.0, activeIngredient: 'Paracetamol 500mg + Caffeine 65mg' }
+        ]
+      },
+      {
+        id: 'prod-2',
+        nameAr: 'أوجمنتين 1 جم أقراص مضاد حيوي',
+        activeIngredient: 'Amoxicillin 875mg + Clavulanic Acid 125mg',
+        price: 135.0,
+        origin: 'local_medicine',
+        isMarketShortage: true, // MARKET SHORTAGE -> NO LOYALTY POINTS
+        substitutes: [
+          { nameAr: 'هاي بيوتك 1 جم أقراص', price: 110.0, activeIngredient: 'Amoxicillin 875mg + Clavulanic Acid 125mg' },
+          { nameAr: 'ميجاموكس 1 جم', price: 105.0, activeIngredient: 'Amoxicillin 875mg + Clavulanic Acid 125mg' }
+        ]
+      },
+      {
+        id: 'prod-3',
+        nameAr: 'كونكور 5 ملجم لضغط الدم والقلب',
+        activeIngredient: 'Bisoprolol Fumarate 5mg',
+        price: 62.50,
+        origin: 'imported_medicine',
+        isMarketShortage: false,
+        substitutes: [
+          { nameAr: 'بيسو 5 ملجم أقراص', price: 42.0, activeIngredient: 'Bisoprolol Fumarate 5mg' }
+        ]
+      },
+      {
+        id: 'prod-4',
+        nameAr: 'لاروش بوزيه سيكابلاست بوم B5+',
+        activeIngredient: 'Panthenol 5% + Madecassoside',
+        price: 440.0,
+        origin: 'imported_cosmetics',
+        isMarketShortage: false,
+        substitutes: []
+      }
+    ];
+
+    let cart = [];
+    let currentRole = 'customer';
+
+    function renderProducts(items = PRODUCTS) {
+      const container = document.getElementById('products-list-container');
+      const originLabels = {
+        local_medicine: 'محلي',
+        imported_medicine: 'مستورد',
+        refrigerated: 'ثلاجة',
+        dairy_and_nutrition: 'ألبان',
+        local_cosmetics: 'تجميل محلي',
+        imported_cosmetics: 'تجميل مستورد'
+      };
+
+      container.innerHTML = items.map(p => `
+        <div class="p-3.5 bg-white rounded-2xl border border-slate-200 shadow-2xs space-y-2">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">${originLabels[p.origin] || p.origin}</span>
+              ${p.isMarketShortage ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 mr-1">نواقص سوق (بدون نقاط)</span>' : ''}
+              <h4 class="font-bold text-slate-900 text-xs mt-1">${p.nameAr}</h4>
+              <p class="text-[11px] text-slate-400">${p.activeIngredient}</p>
+            </div>
+            <div class="text-left font-black text-sm text-emerald-600 font-mono">
+              ${p.price.toFixed(2)} ج.م
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
+            ${p.substitutes && p.substitutes.length > 0 ? `
+              <button onclick="openSubstitutesModal('${p.id}')" class="text-emerald-700 hover:text-emerald-800 font-bold underline cursor-pointer text-[11px] flex items-center gap-1">
+                <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-600"></i>
+                <span>متوفر بدائل بنفس الفعالية (${p.substitutes.length})</span>
+              </button>
+            ` : '<span class="text-[11px] text-slate-400">لا توجد بدائل مسجلة</span>'}
+
+            <button onclick="addToCart('${p.id}')" class="bg-slate-900 text-white font-bold px-3 py-1.5 rounded-xl hover:bg-emerald-600 transition flex items-center gap-1 text-[11px]">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              <span>أضف للسلة</span>
+            </button>
+          </div>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    // Substitutes Modal
+    function openSubstitutesModal(prodId) {
+      const p = PRODUCTS.find(x => x.id === prodId);
+      if (!p || !p.substitutes) return;
+      document.getElementById('substitute-original-name').innerText = `بدائل مكافئة لـ: ${p.nameAr}`;
+      const list = document.getElementById('substitutes-list');
+      list.innerHTML = p.substitutes.map(s => `
+        <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
+          <div>
+            <span class="font-bold text-slate-900 block text-xs">${s.nameAr}</span>
+            <span class="text-[10px] text-slate-500">${s.activeIngredient}</span>
+            <span class="text-xs font-bold text-emerald-700 block mt-0.5">${s.price.toFixed(2)} ج.م</span>
+          </div>
+          <button onclick="alert('تمت إضافة البديل ${s.nameAr} إلى السلة!'); closeSubstitutesModal();" class="bg-emerald-600 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg">اختيار البديل</button>
+        </div>
+      `).join('');
+      document.getElementById('substitutes-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeSubstitutesModal() {
+      document.getElementById('substitutes-modal').classList.add('hidden');
+    }
+
+    function addToCart(id) {
+      cart.push(id);
+      document.getElementById('cart-counter').innerText = cart.length;
+      alert('تمت إضافة الصنف إلى سلة صيدليات الإكسير بنجاح!');
+    }
+
+    function handleSearch() {
+      const q = document.getElementById('main-search-input').value.toLowerCase();
+      const filtered = PRODUCTS.filter(p => p.nameAr.toLowerCase().includes(q) || p.activeIngredient.toLowerCase().includes(q));
+      renderProducts(filtered);
+    }
+
+    function switchRoleToggle() {
+      currentRole = currentRole === 'customer' ? 'courier' : 'customer';
+      document.getElementById('role-badge').innerText = currentRole === 'customer' ? 'متجر العميل' : 'واجهة المندوب';
+      document.getElementById('main-container').classList.toggle('hidden', currentRole === 'courier');
+      document.getElementById('courier-interface').classList.toggle('hidden', currentRole === 'customer');
+    }
+
+    function markDelivered() {
+      alert('تم تأكيد تسليم الطلب #ORD-9021 للعميل بنجاح وتحصيل المبلغ في المحفظة!');
+    }
+
+    function openRxModal() { document.getElementById('rx-modal').classList.remove('hidden'); }
+    function closeRxModal() { document.getElementById('rx-modal').classList.add('hidden'); }
+    function submitRx() { alert('تم إرسال الروشتة لفرع صيدليات الإكسير - المعادي وسيتواصل الصيدلي معك هاتفياً.'); closeRxModal(); }
+
+    function openChatModal() { document.getElementById('chat-modal').classList.remove('hidden'); }
+    function closeChatModal() { document.getElementById('chat-modal').classList.add('hidden'); }
+    function sendChatMessage() {
+      const inp = document.getElementById('chat-input');
+      if (!inp.value.trim()) return;
+      const box = document.getElementById('chat-messages');
+      box.innerHTML += `<div class="bg-emerald-600 text-white p-2.5 rounded-xl rounded-tl-none max-w-[85%] mr-auto">${inp.value}</div>`;
+      inp.value = '';
+      setTimeout(() => {
+        box.innerHTML += `<div class="bg-slate-100 p-2.5 rounded-xl rounded-tr-none max-w-[85%] text-slate-800">أهلاً بك، تم استلام استفسارك وسيتم الرد بالجرعة الدقيقة مباشرة.</div>`;
+      }, 1000);
+    }
+
+    function openDoseModal() { alert('منبه الجرعات: لا توجد أدوية متأخرة اليوم. تم أخذ جرعة كونكور 5 ملجم صباحاً.'); }
+    function openCartDrawer() { alert(`سلة التسوق: تحتوي على ${cart.length} أصناف. المجموع جاهز للتوصيل الفوري.`); }
+    function setTab(t) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.className = 'tab-btn py-1.5 rounded-xl text-slate-600 hover:bg-slate-100');
+      document.getElementById(`tab-${t}`).className = 'tab-btn py-1.5 rounded-xl bg-slate-900 text-white shadow-xs';
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderProducts();
+      lucide.createIcons();
+    });
+  </script>
+</body>
 </html>
