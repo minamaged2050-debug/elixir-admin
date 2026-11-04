@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>لوحة الإدارة المركزية والفروع | صيدليات الإكسير - Elixir Pharmacies HQ & Branch Console</title>
+  <title>لوحة الإدارة المركزية وإدارة الفروع | صيدليات الإكسير - Elixir Pharmacies HQ & Branch Enterprise Console</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Cairo & Inter Fonts -->
@@ -17,25 +17,32 @@
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     ::-webkit-scrollbar-track { background: #f1f5f9; }
+    .badge-local { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+    .badge-imported { background-color: #f3e8ff; color: #6b21a8; border: 1px solid #e9d5ff; }
+    .badge-fridge { background-color: #cffafe; color: #155e75; border: 1px solid #a5f3fc; }
+    .badge-dairy { background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+    .badge-cosm-local { background-color: #fce7f3; color: #9d174d; border: 1px solid #fbcfe8; }
+    .badge-cosm-imp { background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col antialiased">
+<body class="bg-slate-100 text-slate-900 min-h-screen flex flex-col antialiased">
 
-  <!-- ==================== MANDATORY AUTHENTICATION LOGIN WALL ==================== -->
+  <!-- ==================== 1. MANDATORY LOGIN AUTHENTICATION WALL ==================== -->
   <div id="admin-login-wall" class="fixed inset-0 z-50 bg-slate-950 flex items-center justify-center p-4">
     <div class="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 text-white shadow-2xl relative overflow-hidden">
-      <div class="absolute -top-24 -right-24 w-48 h-48 bg-purple-600/30 rounded-full blur-3xl pointer-events-none"></div>
-      <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-emerald-600/20 rounded-full blur-3xl pointer-events-none"></div>
+      <!-- Glow decoration -->
+      <div class="absolute -top-24 -right-24 w-52 h-52 bg-purple-600/30 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-24 -left-24 w-52 h-52 bg-emerald-600/20 rounded-full blur-3xl pointer-events-none"></div>
 
       <!-- Header & Brand -->
       <div class="text-center mb-6 relative z-10">
         <div class="inline-flex p-3 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 shadow-xl mb-3">
           <i data-lucide="shield-check" class="w-8 h-8 text-white"></i>
         </div>
-        <h2 class="text-xl font-black tracking-tight text-white">صيدليات الإكسير</h2>
+        <h2 class="text-2xl font-black tracking-tight text-white">صيدليات الإكسير</h2>
         <p class="text-xs text-purple-300 font-bold mt-1">بوابة تسجيل دخول المدير العام ومديري الفروع</p>
         <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">
-          يرجى إدخال اسم المستخدم وكلمة المرور للدخول للوحة الإدارة حسب الصلاحية المعتمدة
+          يرجى إدخال اسم المستخدم وكلمة المرور للدخول للوحة الإدارة المعتمدة
         </p>
       </div>
 
@@ -71,7 +78,7 @@
 
       <!-- Quick Demo Shortcuts -->
       <div class="mt-6 pt-5 border-t border-slate-800 relative z-10">
-        <div class="text-[11px] font-bold text-slate-400 text-center mb-2.5">تجربة سريعة بالحسابات المعتمدة:</div>
+        <div class="text-[11px] font-bold text-slate-400 text-center mb-2.5">حسابات تجريبية معتمدة للاختبار السريع:</div>
         <div class="grid grid-cols-2 gap-2 text-[10px]">
           <button type="button" onclick="fillAdminLogin('admin', '123')" class="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-start transition cursor-pointer">
             <div class="font-black text-purple-300">المدير العام (HQ)</div>
@@ -94,7 +101,1389 @@
     </div>
   </div>
 
-  <!-- Header and Main Consoles rendered upon successful authentication -->
-  <!-- ... (كامل الميزات الموضحة سابقاً) ... -->
+  <!-- ==================== 2. TOP APPLICATION HEADER ==================== -->
+  <header class="bg-slate-950 text-white border-b border-slate-800 sticky top-0 z-40 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div id="header-badge-icon" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white shadow-md">
+          <i data-lucide="shield-check" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 id="header-main-title" class="text-base sm:text-lg font-black tracking-tight">صيدليات الإكسير - الإدارة العامة المركزية</h1>
+            <span id="header-role-badge" class="bg-purple-900/80 text-purple-200 border border-purple-700/80 text-[10px] font-bold px-2 py-0.5 rounded-full">HQ Console</span>
+          </div>
+          <p id="header-sub-title" class="text-xs text-slate-400">منظومة الإدارة المركزية لدليل العملاء، الفروع، المخزون، ونقاط الولاء</p>
+        </div>
+      </div>
+
+      <!-- Quick Actions, User Tag & Logout -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="logged-user-display" class="font-bold text-slate-200">الإدارة المركزية (المدير العام)</span>
+        </div>
+
+        <button onclick="exportCustomersToExcel()" class="gm-only-btn bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+          <i data-lucide="download" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">تصدير العملاء (Excel)</span>
+        </button>
+
+        <button onclick="openAddCustomerModal()" class="gm-only-btn bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+          <i data-lucide="user-plus" class="w-4 h-4"></i>
+          <span>إضافة عميل</span>
+        </button>
+
+        <!-- Logout Button -->
+        <button onclick="handleAdminLogout()" class="bg-slate-800 hover:bg-rose-900/70 text-slate-300 hover:text-rose-200 border border-slate-700 text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1.5 shadow-sm cursor-pointer" title="تسجيل الخروج">
+          <i data-lucide="log-out" class="w-4 h-4 text-rose-400"></i>
+          <span class="hidden sm:inline">تسجيل الخروج</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- TABS BAR (DYNAMIC BASED ON ROLE) -->
+    <div class="bg-slate-900 border-t border-slate-800 px-4 sm:px-6">
+      <div class="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto py-2 text-xs font-bold scrollbar-none">
+        
+        <!-- GENERAL MANAGER HQ TABS -->
+        <button onclick="switchTab('gm-overview')" id="tab-btn-gm-overview" class="gm-tab-btn tab-btn px-4 py-2 rounded-xl bg-purple-600 text-white shadow-sm flex items-center gap-1.5 transition">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          <span>لوحة المؤشرات العامة</span>
+        </button>
+        <button onclick="switchTab('customers')" id="tab-btn-customers" class="gm-tab-btn tab-btn px-4 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-1.5 transition">
+          <i data-lucide="users" class="w-4 h-4"></i>
+          <span>دليل العملاء الشامل</span>
+        </button>
+        <button onclick="switchTab('products')" id="tab-btn-products" class="gm-tab-btn tab-btn px-4 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-1.5 transition">
+          <i data-lucide="package" class="w-4 h-4"></i>
+          <span>الأصناف والتعديل المجمع</span>
+        </button>
+        <button onclick="switchTab('branches')" id="tab-btn-branches" class="gm-tab-btn tab-btn px-4 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-1.5 transition">
+          <i data-lucide="building-2" class="w-4 h-4"></i>
+          <span>فروع صيدليات الإكسير</span>
+        </button>
+        <button onclick="switchTab('loyalty')" id="tab-btn-loyalty" class="gm-tab-btn tab-btn px-4 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-1.5 transition">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          <span>قواعد نقاط الولاء ونواقص السوق</span>
+        </button>
+        <button onclick="switchTab('erp-sync')" id="tab-btn-erp-sync" class="gm-tab-btn tab-btn px-4 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-1.5 transition">
+          <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+          <span>الربط الصيدلي ERP</span>
+        </button>
+
+        <!-- BRANCH MANAGER SPECIFIC TABS (HIDDEN UNTIL BRANCH LOGIN) -->
+        <button onclick="switchTab('branch-stock')" id="tab-btn-branch-stock" class="branch-tab-btn tab-btn hidden px-4 py-2 rounded-xl bg-emerald-600 text-white shadow-sm flex items-center gap-1.5 transition">
+          <i data-lucide="boxes" class="w-4 h-4"></i>
+          <span>مخزون الفرع والأسعار</span>
+        </button>
+        <button onclick="switchTab('branch-orders')" id="tab-btn-branch-orders" class="branch-tab-btn tab-btn hidden px-4 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-1.5 transition">
+          <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+          <span>طلبات التوصيل للفرع</span>
+        </button>
+        <button onclick="switchTab('branch-prescriptions')" id="tab-btn-branch-prescriptions" class="branch-tab-btn tab-btn hidden px-4 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-1.5 transition">
+          <i data-lucide="file-text" class="w-4 h-4"></i>
+          <span>روشتات الفرع والتحقق</span>
+        </button>
+        <button onclick="switchTab('branch-couriers')" id="tab-btn-branch-couriers" class="branch-tab-btn tab-btn hidden px-4 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-1.5 transition">
+          <i data-lucide="bike" class="w-4 h-4"></i>
+          <span>مناديب التوصيل بالفرع</span>
+        </button>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Branch Leader Operational Banner -->
+  <div id="branch-lead-banner" class="hidden bg-emerald-50 border-b border-emerald-200 px-4 sm:px-6 py-2.5">
+    <div class="max-w-7xl mx-auto flex items-center justify-between text-xs font-bold text-emerald-900">
+      <div class="flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-ping"></span>
+        <span id="branch-lead-banner-text">أنت تدير الآن مخزون وطلبات ومناديب: صيدليات الإكسير</span>
+      </div>
+      <div class="text-[11px] text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full font-mono">
+        صلاحية: صيدلي مدير الفرع (Local Lead)
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 3. MAIN DASHBOARDS ==================== -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex-1 w-full space-y-6">
+
+    <!-- ========== GM TAB 0: OVERVIEW & STATS ========== -->
+    <section id="section-gm-overview" class="tab-section">
+      <!-- KPI Stats Grid -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+          <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
+            <span class="font-bold">إجمالي مبيعات الفروع</span>
+            <span class="p-2 bg-emerald-50 text-emerald-600 rounded-xl"><i data-lucide="trending-up" class="w-4 h-4"></i></span>
+          </div>
+          <div class="text-xl font-black text-slate-900 font-mono">148,650 ج.م</div>
+          <div class="text-[10px] text-emerald-600 font-bold mt-1">▲ +18.4% نمو شهري</div>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+          <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
+            <span class="font-bold">العملاء النشطون</span>
+            <span class="p-2 bg-purple-50 text-purple-600 rounded-xl"><i data-lucide="users" class="w-4 h-4"></i></span>
+          </div>
+          <div class="text-xl font-black text-slate-900 font-mono" id="stat-active-customers">1,420 عميل</div>
+          <div class="text-[10px] text-purple-600 font-bold mt-1">سجلوا من الموبايل</div>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+          <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
+            <span class="font-bold">فروع صيدليات الإكسير</span>
+            <span class="p-2 bg-blue-50 text-blue-600 rounded-xl"><i data-lucide="building-2" class="w-4 h-4"></i></span>
+          </div>
+          <div class="text-xl font-black text-slate-900 font-mono" id="stat-total-branches">5 فروع</div>
+          <div class="text-[10px] text-blue-600 font-bold mt-1">خدمة 24/7 وGPS نشط</div>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+          <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
+            <span class="font-bold">أصناف نواقص السوق</span>
+            <span class="p-2 bg-rose-50 text-rose-600 rounded-xl"><i data-lucide="alert-triangle" class="w-4 h-4"></i></span>
+          </div>
+          <div class="text-xl font-black text-rose-600 font-mono" id="stat-shortage-items">1 صنف شحيح</div>
+          <div class="text-[10px] text-rose-700 font-bold mt-1">مستبعدة برمجياً من نقاط الولاء</div>
+        </div>
+      </div>
+
+      <!-- Quick Shortcuts & Recent Orders Preview -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-5 shadow-xs">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-black text-slate-900 text-sm flex items-center gap-2">
+              <i data-lucide="activity" class="w-4 h-4 text-purple-600"></i>
+              <span>نشاط الفروع والطلبات الحية المركزية</span>
+            </h3>
+            <button onclick="switchTab('customers')" class="text-xs text-purple-600 hover:underline font-bold">عرض الدليل الشامل ←</button>
+          </div>
+          <div class="space-y-3" id="hq-live-orders-feed">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
+          <h3 class="font-black text-slate-900 text-sm flex items-center gap-2">
+            <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i>
+            <span>حالة جاهزية المنظومة</span>
+          </h3>
+          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-2">
+            <div class="flex justify-between"><span class="text-slate-500 font-bold">بوابة الدفع الإكتروني:</span> <span class="text-emerald-700 font-bold">مفعلة (فوري، فيزا)</span></div>
+            <div class="flex justify-between"><span class="text-slate-500 font-bold">التتبع الجغرافي GPS:</span> <span class="text-emerald-700 font-bold">نشط في 5 فروع</span></div>
+            <div class="flex justify-between"><span class="text-slate-500 font-bold">تطبيق المناديب:</span> <span class="text-emerald-700 font-bold">متصل مع QR التسليم</span></div>
+            <div class="flex justify-between"><span class="text-slate-500 font-bold">استبعاد نقاط النواقص:</span> <span class="text-purple-700 font-black">مفعل بصرامة</span></div>
+          </div>
+          <button onclick="alert('تم فحص جميع خدمات وقواعد بيانات صيدليات الإكسير بنجاح، السيرفر يعمل بكفاءة 100%')" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-2">
+            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+            <span>فحص اتصالات المنظومة الآن</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== GM TAB 1: CUSTOMERS DIRECTORY ========== -->
+    <section id="section-customers" class="tab-section hidden">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-5">
+          <div>
+            <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
+              <i data-lucide="users" class="w-5 h-5 text-purple-600"></i>
+              <span>دليل العملاء المركزي وسجلات الطلبات والمحافظ</span>
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">متابعة حسابات العملاء المسجلين عبر الموبايل، تعديل الأرصدة، ونقاط الولاء، وإمكانية الحظر والحذف</p>
+          </div>
+
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <input type="text" id="customer-search-input" onkeyup="filterCustomers()" placeholder="ابحث باسم العميل أو الهاتف..." class="w-full sm:w-64 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-purple-500">
+            <button onclick="bulkDeleteCustomers()" id="bulk-delete-btn" class="hidden bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+              <span>حذف المحدد</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Customers Table -->
+        <div class="overflow-x-auto rounded-xl border border-slate-100">
+          <table class="w-full text-right text-xs">
+            <thead class="bg-slate-100/80 text-slate-700 font-bold border-b border-slate-200">
+              <tr>
+                <th class="p-3 w-10 text-center"><input type="checkbox" id="select-all-customers" onchange="toggleSelectAllCustomers(this)"></th>
+                <th class="p-3">اسم العميل</th>
+                <th class="p-3">رقم الهاتف</th>
+                <th class="p-3">رصيد المحفظة</th>
+                <th class="p-3">نقاط الولاء</th>
+                <th class="p-3">الطلبات</th>
+                <th class="p-3">الحالة</th>
+                <th class="p-3 text-center">إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="customers-table-body" class="divide-y divide-slate-100 text-slate-700">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== GM TAB 2: PRODUCTS & BULK OPERATIONS ========== -->
+    <section id="section-products" class="tab-section hidden">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-5">
+          <div>
+            <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
+              <i data-lucide="package" class="w-5 h-5 text-purple-600"></i>
+              <span>كتالوج الأصناف، التصنيفات الإجبارية، والتعديل المجمع</span>
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">التصنيفات الإجبارية (محلي، مستورد، ثلاجة، ألبان، مستحضرات) وتفعيل نواقص السوق لاستبعاد النقاط</p>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button onclick="openBulkEditModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+              <i data-lucide="edit-3" class="w-4 h-4"></i>
+              <span>تعديل مجمع للأصناف المحددة</span>
+            </button>
+            <button onclick="openAddProductModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+              <span>إضافة صنف جديد</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter bar -->
+        <div class="flex flex-wrap items-center gap-2 mb-4 p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs">
+          <span class="font-bold text-slate-600">تصفية سريعة:</span>
+          <button onclick="filterProductsByOrigin('all')" class="prod-filter-btn px-2.5 py-1 rounded-lg bg-purple-600 text-white font-bold">الكل</button>
+          <button onclick="filterProductsByOrigin('local_medicine')" class="prod-filter-btn px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 font-bold">أدوية محلية</button>
+          <button onclick="filterProductsByOrigin('imported_medicine')" class="prod-filter-btn px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 font-bold">أدوية مستوردة</button>
+          <button onclick="filterProductsByOrigin('shortage')" class="prod-filter-btn px-2.5 py-1 rounded-lg bg-white border border-rose-200 text-rose-700 hover:bg-rose-50 font-bold">⚠️ نواقص السوق فقط</button>
+        </div>
+
+        <!-- Products Table -->
+        <div class="overflow-x-auto rounded-xl border border-slate-100">
+          <table class="w-full text-right text-xs">
+            <thead class="bg-slate-100/80 text-slate-700 font-bold border-b border-slate-200">
+              <tr>
+                <th class="p-3 w-10 text-center"><input type="checkbox" id="select-all-products" onchange="toggleSelectAllProducts(this)"></th>
+                <th class="p-3">اسم الصنف والتفاصيل</th>
+                <th class="p-3">المادة الفعالة والتركيز</th>
+                <th class="p-3">السعر (ج.م)</th>
+                <th class="p-3">التصنيف الإجباري</th>
+                <th class="p-3">نواقص سوق (استبعاد نقاط)</th>
+                <th class="p-3 text-center">إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="products-table-body" class="divide-y divide-slate-100 text-slate-700">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== GM TAB 3: BRANCHES MANAGEMENT ========== -->
+    <section id="section-branches" class="tab-section hidden">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-5">
+          <div>
+            <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
+              <i data-lucide="building-2" class="w-5 h-5 text-purple-600"></i>
+              <span>إدارة وتعديل فروع صيدليات الإكسير</span>
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">جميع الفروع تابعة حصرياً لصيدليات الإكسير ومربوطة بالإحداثيات الجغرافية GPS والصيدلي المدير</p>
+          </div>
+
+          <button onclick="openAddBranchModal()" class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>إضافة فرع جديد لصيدليات الإكسير</span>
+          </button>
+        </div>
+
+        <div id="branches-cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== GM TAB 4: LOYALTY RULES & SHORTAGES ========== -->
+    <section id="section-loyalty" class="tab-section hidden">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6">
+        <h2 class="text-lg font-black text-slate-900 flex items-center gap-2 mb-2">
+          <i data-lucide="sparkles" class="w-5 h-5 text-purple-600"></i>
+          <span>قواعد احتساب نقاط الولاء واستثناء نواقص السوق</span>
+        </h2>
+        <p class="text-xs text-slate-500 mb-6">حدد عدد النقاط المكتسبة لكل 10 جنيهات بناءً على تصنيف الصنف الإجباري</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+          <div class="p-4 rounded-xl border border-slate-200 bg-slate-50">
+            <span class="font-bold text-slate-800 block mb-1">أدوية محلية (Local Medicine):</span>
+            <input type="number" id="loyalty-local" value="1.0" step="0.1" class="w-full border border-slate-200 rounded-lg p-2 bg-white font-bold text-slate-900">
+            <span class="text-[10px] text-slate-400 mt-1 block">1 نقطة لكل 10 ج.م</span>
+          </div>
+          <div class="p-4 rounded-xl border border-slate-200 bg-slate-50">
+            <span class="font-bold text-slate-800 block mb-1">أدوية مستوردة (Imported Medicine):</span>
+            <input type="number" id="loyalty-imported" value="0.5" step="0.1" class="w-full border border-slate-200 rounded-lg p-2 bg-white font-bold text-slate-900">
+            <span class="text-[10px] text-slate-400 mt-1 block">0.5 نقطة لكل 10 ج.م</span>
+          </div>
+          <div class="p-4 rounded-xl border border-slate-200 bg-slate-50">
+            <span class="font-bold text-slate-800 block mb-1">ثلاجة ومضادات حيوية:</span>
+            <input type="number" id="loyalty-fridge" value="1.0" step="0.1" class="w-full border border-slate-200 rounded-lg p-2 bg-white font-bold text-slate-900">
+            <span class="text-[10px] text-slate-400 mt-1 block">1 نقطة لكل 10 ج.م</span>
+          </div>
+          <div class="p-4 rounded-xl border border-slate-200 bg-slate-50">
+            <span class="font-bold text-slate-800 block mb-1">ألبان وتغذية أطفال:</span>
+            <input type="number" id="loyalty-dairy" value="0.25" step="0.05" class="w-full border border-slate-200 rounded-lg p-2 bg-white font-bold text-slate-900">
+            <span class="text-[10px] text-slate-400 mt-1 block">0.25 نقطة لكل 10 ج.م</span>
+          </div>
+          <div class="p-4 rounded-xl border border-slate-200 bg-slate-50">
+            <span class="font-bold text-slate-800 block mb-1">مستحضرات تجميل محلية:</span>
+            <input type="number" id="loyalty-cosm-loc" value="2.0" step="0.1" class="w-full border border-slate-200 rounded-lg p-2 bg-white font-bold text-slate-900">
+            <span class="text-[10px] text-slate-400 mt-1 block">2 نقطة لكل 10 ج.م</span>
+          </div>
+          <div class="p-4 rounded-xl border border-slate-200 bg-slate-50">
+            <span class="font-bold text-slate-800 block mb-1">مستحضرات تجميل مستوردة:</span>
+            <input type="number" id="loyalty-cosm-imp" value="1.5" step="0.1" class="w-full border border-slate-200 rounded-lg p-2 bg-white font-bold text-slate-900">
+            <span class="text-[10px] text-slate-400 mt-1 block">1.5 نقطة لكل 10 ج.م</span>
+          </div>
+        </div>
+
+        <div class="mt-6 p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 flex items-start gap-2.5">
+          <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-600 shrink-0 mt-0.5"></i>
+          <div>
+            <span class="font-black text-sm">قاعدة استبعاد نواقص السوق الإلزامية:</span>
+            <p class="mt-0.5 text-amber-800 leading-relaxed">
+              إذا تم تفعيل خيار <strong class="text-amber-950 font-black">"صنف ناقص بالسوق"</strong> على أي دواء، يقوم النظام برمجياً بتصفير النقاط المكتسبة لهذا الصنف بالكامل (0 نقطة) عند شراء العميل له، لحماية الأدوية الحيوية من الاستغلال والحفاظ على هوامش الربحية.
+            </p>
+          </div>
+        </div>
+
+        <button onclick="saveLoyaltySettings()" class="mt-5 bg-purple-600 hover:bg-purple-700 text-white font-bold px-5 py-2.5 rounded-xl transition text-xs flex items-center gap-2 cursor-pointer">
+          <i data-lucide="check" class="w-4 h-4"></i>
+          <span>حفظ وتطبيق القواعد على مستوى جميع الفروع</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ========== GM TAB 5: ERP & SYNC ========== -->
+    <section id="section-erp-sync" class="tab-section hidden">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6 space-y-4">
+        <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
+          <i data-lucide="refresh-cw" class="w-5 h-5 text-purple-600"></i>
+          <span>الربط الصيدلي المتقدم والتزامن مع أنظمة الـ ERP</span>
+        </h2>
+        <p class="text-xs text-slate-500">إدارة مفاتيح الـ API و Webhooks لتزامن المخزون اللحظي مع برامج الصيدليات (فارما بلس، يوتوبيا، إلخ)</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+            <label class="font-bold text-slate-800 block">رابط الويب هوك المركزي (Central Webhook URL):</label>
+            <input type="text" readonly value="https://api.elixir-pharmacies.com/v1/sync/inventory" class="w-full border border-slate-200 rounded-lg p-2 font-mono bg-white text-slate-600">
+            <span class="text-[11px] text-slate-400">يستخدم لاستقبال تحديثات المخزون التلقائية من الفروع</span>
+          </div>
+
+          <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+            <label class="font-bold text-slate-800 block">مفتاح المصادقة الآمن (HQ Master API Key):</label>
+            <input type="text" readonly value="elx_live_sec_994821a8f0923e41bca9" class="w-full border border-slate-200 rounded-lg p-2 font-mono bg-white text-slate-600">
+            <span class="text-[11px] text-slate-400">خاص بربط سيرفرات الفروع مع لوحة الإدارة العامة</span>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-900 text-white text-xs flex items-center justify-between">
+          <div>
+            <div class="font-bold text-purple-300">التزامن التلقائي للمخزون: نشط (كل 5 دقائق)</div>
+            <div class="text-[11px] text-slate-400">آخر عملية مزامنة ناجحة منذ: 2 دقيقة عبر جميع الفروع الـ 5</div>
+          </div>
+          <button onclick="alert('تم إرسال إشارة تزامن فوري لجميع فروع صيدليات الإكسير بنجاح!')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold transition flex items-center gap-1.5 cursor-pointer">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+            <span>تزامن فوري الآن</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== BRANCH TAB 1: LOCAL STOCK MANAGEMENT ========== -->
+    <section id="section-branch-stock" class="tab-section hidden">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-5">
+          <div>
+            <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
+              <i data-lucide="boxes" class="w-5 h-5 text-emerald-600"></i>
+              <span id="branch-stock-title">مخزون الفرع والأسعار وتوافر الأدوية</span>
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">تعديل رصيد العبوات المتوفرة بالفرع، تعيين نفاد الكمية، أو وسم الأصناف الشحيحة</p>
+          </div>
+
+          <button onclick="openBranchAddStockModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>إضافة صنف لمخزون الفرع</span>
+          </button>
+        </div>
+
+        <div class="overflow-x-auto rounded-xl border border-slate-100">
+          <table class="w-full text-right text-xs">
+            <thead class="bg-slate-100/80 text-slate-700 font-bold border-b border-slate-200">
+              <tr>
+                <th class="p-3">اسم الدواء</th>
+                <th class="p-3">المادة الفعالة</th>
+                <th class="p-3">سعر البيع</th>
+                <th class="p-3">الرصيد بالفرع</th>
+                <th class="p-3">حالة التوافر</th>
+                <th class="p-3 text-center">إجراءات الصيدلي</th>
+              </tr>
+            </thead>
+            <tbody id="branch-stock-table-body" class="divide-y divide-slate-100 text-slate-700">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== BRANCH TAB 2: INCOMING ORDERS ========== -->
+    <section id="section-branch-orders" class="tab-section hidden">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
+              <i data-lucide="shopping-cart" class="w-5 h-5 text-emerald-600"></i>
+              <span>طلبات التوصيل الواردة لهذا الفرع</span>
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">الطلبات الموجهة تلقائياً للفرع بناءً على الموقع الجغرافي للعميل</p>
+          </div>
+          <span class="px-3 py-1 bg-emerald-50 text-emerald-800 rounded-full font-bold text-xs border border-emerald-200">
+            تحديث لحظي نشط ⚡
+          </span>
+        </div>
+
+        <div class="space-y-3" id="branch-orders-list">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== BRANCH TAB 3: PRESCRIPTIONS REVIEW ========== -->
+    <section id="section-branch-prescriptions" class="tab-section hidden">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6">
+        <h2 class="text-lg font-black text-slate-900 flex items-center gap-2 mb-2">
+          <i data-lucide="file-text" class="w-5 h-5 text-emerald-600"></i>
+          <span>الروشتات الطبية المرفوعة للفرع والمراجعة الصيدلية</span>
+        </h2>
+        <p class="text-xs text-slate-500 mb-6">فحص صور الروشتات، التأكد من التركيزات، وتجهيز الطلب للعميل</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="branch-prescriptions-list">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== BRANCH TAB 4: BRANCH COURIERS ========== -->
+    <section id="section-branch-couriers" class="tab-section hidden">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
+              <i data-lucide="bike" class="w-5 h-5 text-emerald-600"></i>
+              <span>مناديب التوصيل التابعين للفرع</span>
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">متابعة المناديب النشطين، الطلبات المسندة، وتأكيد التسليم برمز الـ QR</p>
+          </div>
+          <button onclick="alert('تم طلب مندوب دعم إضافي من الإدارة العامة!')" class="px-3 py-1.5 bg-slate-900 text-white rounded-xl text-xs font-bold hover:bg-slate-800 transition">
+            + طلب مندوب دعم
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="branch-couriers-list">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== 4. MODALS & DRAWERS ==================== -->
+
+  <!-- CUSTOMER DETAILS DRAWER -->
+  <div id="customer-drawer" class="fixed inset-y-0 left-0 w-full max-w-md bg-white shadow-2xl z-50 transform -translate-x-full transition-transform duration-300 border-r border-slate-200 flex flex-col text-xs">
+    <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+      <div class="flex items-center gap-2">
+        <i data-lucide="user" class="w-5 h-5 text-purple-600"></i>
+        <h3 class="font-black text-slate-900 text-sm" id="drawer-customer-name">تفاصيل العميل</h3>
+      </div>
+      <button onclick="closeCustomerDrawer()" class="p-1 hover:bg-slate-200 rounded-lg text-slate-500 cursor-pointer"><i data-lucide="x" class="w-5 h-5"></i></button>
+    </div>
+
+    <div class="p-4 flex-1 overflow-y-auto space-y-4" id="drawer-content">
+      <div class="grid grid-cols-2 gap-2 text-center">
+        <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-100">
+          <span class="text-[10px] text-emerald-700 font-bold">رصيد المحفظة</span>
+          <div class="text-base font-black text-emerald-800" id="drawer-customer-wallet">0.00 ج.م</div>
+          <button onclick="topUpCustomerWallet()" class="mt-1 text-[10px] text-emerald-700 hover:underline font-bold">+ شحن رصيد</button>
+        </div>
+        <div class="p-3 bg-amber-50 rounded-xl border border-amber-100">
+          <span class="text-[10px] text-amber-700 font-bold">نقاط الولاء</span>
+          <div class="text-base font-black text-amber-800" id="drawer-customer-points">0 نقطة</div>
+          <button onclick="adjustCustomerPoints()" class="mt-1 text-[10px] text-amber-700 hover:underline font-bold">± تعديل النقاط</button>
+        </div>
+      </div>
+
+      <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1.5">
+        <div><span class="text-slate-400 font-bold">رقم الهاتف:</span> <span id="drawer-customer-phone" class="font-mono text-slate-900"></span></div>
+        <div><span class="text-slate-400 font-bold">العنوان:</span> <span id="drawer-customer-address" class="text-slate-900"></span></div>
+        <div><span class="text-slate-400 font-bold">الأمراض المزمنة:</span> <span id="drawer-customer-chronic" class="text-rose-600 font-bold"></span></div>
+      </div>
+
+      <div>
+        <h4 class="font-black text-slate-900 mb-2">سجل الطلبات الأخير</h4>
+        <div class="space-y-2" id="drawer-order-history">
+          <!-- Orders items -->
+        </div>
+      </div>
+
+      <div class="pt-4 border-t border-slate-200 flex items-center gap-2">
+        <button onclick="toggleBlockCustomer()" class="flex-1 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 py-2 rounded-xl font-bold transition cursor-pointer">
+          حظر / رفع الحظر
+        </button>
+        <button onclick="deleteCurrentDrawerCustomer()" class="flex-1 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 py-2 rounded-xl font-bold transition cursor-pointer">
+          حذف العميل
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BULK EDIT PRODUCTS MODAL -->
+  <div id="bulk-edit-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 text-xs">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-sm font-black text-slate-900">تعديل مجمع للأصناف المحددة</h3>
+        <button onclick="closeBulkEditModal()" class="text-slate-400 hover:text-slate-600 cursor-pointer"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">تعديل التصنيف الإجباري للمحدد:</label>
+          <select id="bulk-origin-select" class="w-full border border-slate-200 rounded-xl p-2 bg-slate-50">
+            <option value="">-- لا تغيير --</option>
+            <option value="local_medicine">محلي (Local Medicine)</option>
+            <option value="imported_medicine">مستورد (Imported Medicine)</option>
+            <option value="refrigerated">ثلاجة ومضادات حيوية</option>
+            <option value="dairy_and_nutrition">ألبان وتغذية أطفال</option>
+            <option value="local_cosmetics">مستحضرات تجميل محلية</option>
+            <option value="imported_cosmetics">مستحضرات تجميل مستوردة</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">تعيين كـ "نواقص سوق" (استبعاد نقاط الولاء):</label>
+          <select id="bulk-shortage-select" class="w-full border border-slate-200 rounded-xl p-2 bg-slate-50">
+            <option value="">-- لا تغيير --</option>
+            <option value="true">نعم (صنف شحيح بالسوق - 0 نقاط)</option>
+            <option value="false">لا (متوفر طبيعي - يكتسب نقاط)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">تطبيق خصم مئوي (%) على السعر:</label>
+          <input type="number" id="bulk-discount-input" placeholder="مثال: 10" class="w-full border border-slate-200 rounded-xl p-2">
+        </div>
+      </div>
+
+      <div class="mt-5 flex items-center justify-end gap-2">
+        <button onclick="closeBulkEditModal()" class="px-4 py-2 text-slate-600 font-bold hover:bg-slate-100 rounded-xl cursor-pointer">إلغاء</button>
+        <button onclick="applyBulkProductEdit()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl cursor-pointer">تطبيق التعديلات</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BRANCH MANAGEMENT MODAL -->
+  <div id="branch-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 text-xs">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-sm font-black text-slate-900" id="branch-modal-title">إدارة وتعديل بيانات الفرع</h3>
+        <button onclick="closeBranchModal()" class="text-slate-400 hover:text-slate-600 cursor-pointer"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">اسم الفرع (بالعربية):</label>
+          <input type="text" id="branch-name-input" class="w-full border border-slate-200 rounded-xl p-2" placeholder="صيدليات الإكسير - فرع كذا">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">الصيدلي المدير:</label>
+            <input type="text" id="branch-manager-input" class="w-full border border-slate-200 rounded-xl p-2" placeholder="د. اسم المدير">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">الهاتف المباشر:</label>
+            <input type="text" id="branch-phone-input" class="w-full border border-slate-200 rounded-xl p-2" placeholder="01070622622">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">نصف قطر التغطية (كم):</label>
+            <input type="number" id="branch-radius-input" class="w-full border border-slate-200 rounded-xl p-2" placeholder="8.5">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">رسوم التوصيل:</label>
+            <input type="text" id="branch-fee-input" class="w-full border border-slate-200 rounded-xl p-2" placeholder="مجاني أو 15 ج.م">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">إحداثي خط العرض (Lat):</label>
+            <input type="number" step="0.0001" id="branch-lat-input" class="w-full border border-slate-200 rounded-xl p-2" value="29.9602">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">إحداثي خط الطول (Lng):</label>
+            <input type="number" step="0.0001" id="branch-lng-input" class="w-full border border-slate-200 rounded-xl p-2" value="31.2778">
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-5 flex items-center justify-end gap-2">
+        <button onclick="closeBranchModal()" class="px-4 py-2 text-slate-600 font-bold hover:bg-slate-100 rounded-xl cursor-pointer">إلغاء</button>
+        <button onclick="saveBranchModal()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl cursor-pointer">حفظ بيانات الفرع</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 5. COMPLETE JAVASCRIPT SYSTEM ENGINE ==================== -->
+  <script>
+    // State management
+    let currentAdminSession = null;
+
+    // Branches
+    let branches = [
+      { id: 'br-1', nameAr: 'صيدليات الإكسير - فرع المعادي (شارع النصر)', manager: 'د. طارق الحفناوي', username: 'manager_maadi', phone: '01070622622', radius: '8.5 كم', fee: 'مجاني', hours: '24/7', lat: 29.9602, lng: 31.2778 },
+      { id: 'br-2', nameAr: 'صيدليات الإكسير - فرع ثكنات المعادي (شارع 9)', manager: 'د. رانيا عبد السميع', username: 'manager_thakanat', phone: '01070622622', radius: '7.0 كم', fee: '12 ج.م', hours: '24/7', lat: 29.9542, lng: 31.2618 },
+      { id: 'br-3', nameAr: 'صيدليات الإكسير - فرع دجلة المعادي (شارع اللاسلكي)', manager: 'د. عمرو السعدني', username: 'manager_degla', phone: '01070622622', radius: '9.5 كم', fee: '15 ج.م', hours: '24/7', lat: 29.9722, lng: 31.2891 },
+      { id: 'br-4', nameAr: 'صيدليات الإكسير - فرع ميدان الجزائر', manager: 'د. كريم عبد العزيز', username: 'manager_gazayer', phone: '01070622622', radius: '6.0 كم', fee: 'مجاني', hours: '24/7', lat: 29.9780, lng: 31.2710 },
+      { id: 'br-5', nameAr: 'صيدليات الإكسير - فرع شبرا مصر', manager: 'د. منى الشريف', username: 'manager_shobra', phone: '01070622622', radius: '8.0 كم', fee: '10 ج.م', hours: '24/7', lat: 30.0820, lng: 31.2460 }
+    ];
+
+    // Customers
+    let customers = [
+      { id: 'cust-1', name: 'أحمد محمود النجار', phone: '01012345678', walletBalance: 145.50, loyaltyPoints: 320, totalOrders: 14, chronic: 'ضغط الدم، حساسية صدرية', address: 'المعادي - شارع النصر', status: 'active' },
+      { id: 'cust-2', name: 'سارة عبد الرحمن', phone: '01198765432', walletBalance: 40.00, loyaltyPoints: 85, totalOrders: 4, chronic: 'لا يوجد', address: 'دجلة المعادي - شارع اللاسلكي', status: 'active' },
+      { id: 'cust-3', name: 'د. طارق السعيد', phone: '01233445566', walletBalance: 310.00, loyaltyPoints: 640, totalOrders: 22, chronic: 'سكري النوع الثاني', address: 'ثكنات المعادي - شارع 9', status: 'active' },
+      { id: 'cust-4', name: 'مها إبراهيم كمال', phone: '01099887766', walletBalance: 95.00, loyaltyPoints: 190, totalOrders: 8, chronic: 'قصور الغدة الدرقية', address: 'ميدان الجزائر - المعادي', status: 'active' },
+      { id: 'cust-5', name: 'عمر شريف الدسوقي', phone: '01511223344', walletBalance: 0.00, loyaltyPoints: 15, totalOrders: 1, chronic: 'لا يوجد', address: 'شبرا مصر - شارع شبرا', status: 'active' }
+    ];
+
+    // Products
+    let products = [
+      { id: 'prod-1', nameAr: 'بانادول إكسترا 500 ملجم', activeIngredient: 'Paracetamol 500mg + Caffeine 65mg', price: 45.00, origin: 'local_medicine', isMarketShortage: false, branchStock: 120 },
+      { id: 'prod-2', nameAr: 'أوجمنتين 1 جم أقراص', activeIngredient: 'Amoxicillin + Clavulanic Acid', price: 135.00, origin: 'local_medicine', isMarketShortage: true, branchStock: 8 },
+      { id: 'prod-3', nameAr: 'كونكور 5 ملجم لضغط الدم', activeIngredient: 'Bisoprolol Fumarate 5mg', price: 62.50, origin: 'imported_medicine', isMarketShortage: false, branchStock: 45 },
+      { id: 'prod-4', nameAr: 'لاروش بوزيه سيكابلاست بوم B5+', activeIngredient: 'Panthenol 5% + Madecassoside', price: 440.00, origin: 'imported_cosmetics', isMarketShortage: false, branchStock: 14 },
+      { id: 'prod-5', nameAr: 'أنسولين لانتوس سولوستار قلم 100 وحدة', activeIngredient: 'Insulin Glargine 100 U/ml', price: 320.00, origin: 'refrigerated', isMarketShortage: false, branchStock: 22 },
+      { id: 'prod-6', nameAr: 'حليب نان أوبتي برو 1 (400 جم)', activeIngredient: 'Infant Milk Formula with Iron', price: 215.00, origin: 'dairy_and_nutrition', isMarketShortage: false, branchStock: 35 },
+      { id: 'prod-7', nameAr: 'سيروم فيتامين سي إيفا كولاجين', activeIngredient: 'Vitamin C + Marine Collagen', price: 185.00, origin: 'local_cosmetics', isMarketShortage: false, branchStock: 19 }
+    ];
+
+    // Orders
+    let orders = [
+      { id: 'ELX-9821', customerName: 'أحمد محمود النجار', branchId: 'br-1', branchName: 'فرع المعادي', total: 280.00, itemsCount: 3, status: 'delivered', time: 'منذ 15 دقيقة', address: 'شارع النصر، المعادي' },
+      { id: 'ELX-9822', customerName: 'سارة عبد الرحمن', branchId: 'br-3', branchName: 'فرع دجلة', total: 440.00, itemsCount: 1, status: 'delivering', time: 'منذ 8 دقائق', address: 'شارع اللاسلكي، دجلة' },
+      { id: 'ELX-9823', customerName: 'د. طارق السعيد', branchId: 'br-2', branchName: 'فرع ثكنات المعادي', total: 197.50, itemsCount: 2, status: 'preparing', time: 'الآن', address: 'شارع 9، ثكنات المعادي' }
+    ];
+
+    // Prescriptions
+    let prescriptions = [
+      { id: 'rx-101', customerName: 'أحمد محمود النجار', branchId: 'br-1', doctor: 'د. ماجد فهمي (استشاري باطنة)', date: 'اليوم', status: 'verified', notes: 'بانادول إكسترا + كونكور 5 مجم' },
+      { id: 'rx-102', customerName: 'مها إبراهيم كمال', branchId: 'br-4', doctor: 'د. نجلاء عبد الهادي (غدد)', date: 'اليوم', status: 'pending', notes: 'إلتروكسين 50 ميكروجرام صباحاً على الريق' }
+    ];
+
+    // Couriers
+    let couriers = [
+      { id: 'cr-1', name: 'محمد رمضان عبد العال', phone: '01011223344', branchId: 'br-1', status: 'delivering', currentOrder: 'ELX-9822' },
+      { id: 'cr-2', name: 'إسلام خالد الصاوي', phone: '01122334455', branchId: 'br-1', status: 'idle', currentOrder: null },
+      { id: 'cr-3', name: 'محمود جابر الشرقاوي', phone: '01233445566', branchId: 'br-2', status: 'delivering', currentOrder: 'ELX-9823' }
+    ];
+
+    const originLabels = {
+      local_medicine: { text: 'محلي', cls: 'badge-local' },
+      imported_medicine: { text: 'مستورد', cls: 'badge-imported' },
+      refrigerated: { text: 'ثلاجة ومضادات', cls: 'badge-fridge' },
+      dairy_and_nutrition: { text: 'ألبان وتغذية', cls: 'badge-dairy' },
+      local_cosmetics: { text: 'مستحضرات محلية', cls: 'badge-cosm-local' },
+      imported_cosmetics: { text: 'مستحضرات مستوردة', cls: 'badge-cosm-imp' }
+    };
+
+    // 1. Authentication Handlers
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const u = document.getElementById('login-username').value.trim();
+      const p = document.getElementById('login-password').value.trim();
+      const errBox = document.getElementById('login-error-box');
+
+      // General Manager
+      if (u === 'admin' && (p === '123' || p === 'admin123')) {
+        currentAdminSession = {
+          role: 'general_manager',
+          username: 'admin',
+          displayName: 'الإدارة المركزية (المدير العام)',
+          branchId: null,
+          branchName: null
+        };
+        applySession();
+        return;
+      }
+
+      // Branch Manager
+      const matchedBranch = branches.find(b => b.username === u || u.toLowerCase() === b.id.toLowerCase());
+      if (matchedBranch && (p === '123' || p === 'password123' || p === 'admin123')) {
+        currentAdminSession = {
+          role: 'branch_manager',
+          username: u,
+          displayName: `${matchedBranch.manager} (${matchedBranch.nameAr.replace('صيدليات الإكسير - ', '')})`,
+          branchId: matchedBranch.id,
+          branchName: matchedBranch.nameAr
+        };
+        applySession();
+        return;
+      }
+
+      errBox.classList.remove('hidden');
+    }
+
+    function fillAdminLogin(u, p) {
+      document.getElementById('login-username').value = u;
+      document.getElementById('login-password').value = p;
+      document.getElementById('login-error-box').classList.add('hidden');
+    }
+
+    function applySession() {
+      if (!currentAdminSession) return;
+      sessionStorage.setItem('elixir_admin_session', JSON.stringify(currentAdminSession));
+      document.getElementById('admin-login-wall').classList.add('hidden');
+
+      const isGM = currentAdminSession.role === 'general_manager';
+      document.getElementById('logged-user-display').innerText = currentAdminSession.displayName;
+
+      if (isGM) {
+        // Show General Manager layout
+        document.getElementById('header-main-title').innerText = 'صيدليات الإكسير - الإدارة العامة المركزية';
+        document.getElementById('header-role-badge').innerText = 'HQ Console - المدير العام';
+        document.getElementById('header-sub-title').innerText = 'منظومة الإدارة المركزية لدليل العملاء، الفروع، المخزون، ونقاط الولاء';
+        document.getElementById('branch-lead-banner').classList.add('hidden');
+
+        document.querySelectorAll('.gm-only-btn').forEach(el => el.classList.remove('hidden'));
+        document.querySelectorAll('.gm-tab-btn').forEach(el => el.classList.remove('hidden'));
+        document.querySelectorAll('.branch-tab-btn').forEach(el => el.classList.add('hidden'));
+
+        switchTab('gm-overview');
+      } else {
+        // Show Branch Manager layout
+        document.getElementById('header-main-title').innerText = `لوحة تحكم: ${currentAdminSession.branchName}`;
+        document.getElementById('header-role-badge').innerText = 'Branch Console - مدير الفرع';
+        document.getElementById('header-sub-title').innerText = `متابعة مخزون فرع ${currentAdminSession.branchName}، طلبات التوصيل، والمناديب`;
+        
+        const banner = document.getElementById('branch-lead-banner');
+        banner.classList.remove('hidden');
+        document.getElementById('branch-lead-banner-text').innerText = `أنت تدير الآن مخزون وطلبات ${currentAdminSession.branchName}`;
+
+        document.querySelectorAll('.gm-only-btn').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.gm-tab-btn').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.branch-tab-btn').forEach(el => el.classList.remove('hidden'));
+
+        document.getElementById('branch-stock-title').innerText = `مخزون ${currentAdminSession.branchName} والأسعار`;
+
+        switchTab('branch-stock');
+      }
+
+      renderAll();
+    }
+
+    function handleAdminLogout() {
+      sessionStorage.removeItem('elixir_admin_session');
+      currentAdminSession = null;
+      document.getElementById('admin-login-wall').classList.remove('hidden');
+      document.getElementById('login-password').value = '';
+      document.getElementById('login-error-box').classList.add('hidden');
+    }
+
+    // 2. Navigation & Tabs
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-section').forEach(s => s.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('bg-purple-600', 'bg-emerald-600', 'text-white', 'shadow-sm');
+        b.classList.add('text-slate-300');
+      });
+
+      const section = document.getElementById(`section-${tab}`);
+      if (section) section.classList.remove('hidden');
+
+      const activeBtn = document.getElementById(`tab-btn-${tab}`);
+      if (activeBtn) {
+        const isBranchTab = tab.startsWith('branch-');
+        activeBtn.classList.add(isBranchTab ? 'bg-emerald-600' : 'bg-purple-600', 'text-white', 'shadow-sm');
+        activeBtn.classList.remove('text-slate-300');
+      }
+    }
+
+    // 3. Renderers
+    function renderAll() {
+      renderOverviewFeed();
+      renderCustomers();
+      renderProducts();
+      renderBranches();
+      renderBranchStock();
+      renderBranchOrders();
+      renderBranchPrescriptions();
+      renderBranchCouriers();
+      updateStats();
+      lucide.createIcons();
+    }
+
+    function updateStats() {
+      document.getElementById('stat-active-customers').innerText = `${customers.length} عميل`;
+      document.getElementById('stat-total-branches').innerText = `${branches.length} فروع`;
+      const shortages = products.filter(p => p.isMarketShortage).length;
+      document.getElementById('stat-shortage-items').innerText = `${shortages} صنف شحيح`;
+    }
+
+    function renderOverviewFeed() {
+      const feed = document.getElementById('hq-live-orders-feed');
+      feed.innerHTML = orders.map(o => `
+        <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between text-xs hover:bg-slate-100 transition">
+          <div>
+            <div class="font-bold text-slate-900">${o.customerName} <span class="text-purple-600 font-mono text-[11px] font-bold">#${o.id}</span></div>
+            <div class="text-slate-500 text-[11px] mt-0.5">${o.branchName} • ${o.address}</div>
+          </div>
+          <div class="text-left font-mono">
+            <div class="font-bold text-emerald-700">${o.total.toFixed(2)} ج.م</div>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${
+              o.status === 'delivered' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800 animate-pulse'
+            }">${o.status === 'delivered' ? 'تم التسليم' : 'جاري التوصيل'}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderCustomers() {
+      const tbody = document.getElementById('customers-table-body');
+      tbody.innerHTML = customers.map(c => `
+        <tr class="hover:bg-slate-50 transition cursor-pointer" onclick="openCustomerDrawer('${c.id}')">
+          <td class="p-3 text-center" onclick="event.stopPropagation()"><input type="checkbox" class="customer-chk" value="${c.id}" onchange="updateCustomerSelection()"></td>
+          <td class="p-3 font-bold text-slate-900">${c.name}</td>
+          <td class="p-3 font-mono text-slate-600">${c.phone}</td>
+          <td class="p-3 font-bold text-emerald-600">${c.walletBalance.toFixed(2)} ج.م</td>
+          <td class="p-3 font-bold text-amber-600">${c.loyaltyPoints} نقطة</td>
+          <td class="p-3 font-mono">${c.totalOrders}</td>
+          <td class="p-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${c.status === 'active' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200'}">${c.status === 'active' ? 'نشط' : 'محظور'}</span></td>
+          <td class="p-3 text-center" onclick="event.stopPropagation()">
+            <button onclick="editCustomer('${c.id}')" class="p-1.5 hover:bg-slate-200 rounded-lg text-slate-600 transition cursor-pointer" title="تعديل"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+            <button onclick="deleteCustomer('${c.id}')" class="p-1.5 hover:bg-rose-100 rounded-lg text-rose-600 transition cursor-pointer" title="حذف"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+          </td>
+        </tr>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    let activeProductFilter = 'all';
+    function filterProductsByOrigin(origin) {
+      activeProductFilter = origin;
+      renderProducts();
+    }
+
+    function renderProducts() {
+      const tbody = document.getElementById('products-table-body');
+      let filtered = products;
+      if (activeProductFilter === 'shortage') {
+        filtered = products.filter(p => p.isMarketShortage);
+      } else if (activeProductFilter !== 'all') {
+        filtered = products.filter(p => p.origin === activeProductFilter);
+      }
+
+      tbody.innerHTML = filtered.map(p => {
+        const info = originLabels[p.origin] || { text: p.origin, cls: 'badge-local' };
+        return `
+          <tr class="hover:bg-slate-50 transition">
+            <td class="p-3 text-center"><input type="checkbox" class="product-chk" value="${p.id}"></td>
+            <td class="p-3 font-bold text-slate-900">
+              <div>${p.nameAr}</div>
+              <div class="text-[10px] text-slate-400 font-mono">الرصيد الكلي: ${p.branchStock || 25} عبوة</div>
+            </td>
+            <td class="p-3 text-slate-600 font-mono text-[11px]">${p.activeIngredient}</td>
+            <td class="p-3 font-bold text-emerald-700 font-mono">${p.price.toFixed(2)} ج.م</td>
+            <td class="p-3">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${info.cls}">
+                ${info.text}
+              </span>
+            </td>
+            <td class="p-3">
+              ${p.isMarketShortage 
+                ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-100 text-rose-800 border border-rose-300">⚠️ ناقص بالسوق (0 نقاط ولاء)</span>'
+                : '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">✓ متوفر (يكتسب نقاط)</span>'
+              }
+            </td>
+            <td class="p-3 text-center">
+              <button onclick="quickToggleShortage('${p.id}')" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[10px] font-bold transition cursor-pointer">
+                تبديل حالة النواقص
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    function quickToggleShortage(id) {
+      const p = products.find(x => x.id === id);
+      if (p) {
+        p.isMarketShortage = !p.isMarketShortage;
+        renderProducts();
+        renderBranchStock();
+        updateStats();
+      }
+    }
+
+    function renderBranches() {
+      const container = document.getElementById('branches-cards-container');
+      container.innerHTML = branches.map(b => `
+        <div class="p-4 rounded-2xl border border-slate-200 bg-slate-50/60 hover:bg-white hover:shadow-md transition">
+          <div class="flex items-center justify-between mb-2">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">${b.hours}</span>
+            <span class="text-slate-400 font-mono text-xs">نطاق: ${b.radius}</span>
+          </div>
+          <h4 class="font-black text-slate-900 text-sm mb-1">${b.nameAr}</h4>
+          <p class="text-slate-600 text-xs mb-1">المدير: <span class="font-bold text-slate-800">${b.manager}</span></p>
+          <p class="text-slate-500 font-mono text-xs mb-3">حساب الدخول: <span class="bg-slate-200 px-1.5 py-0.5 rounded text-purple-700 font-bold">${b.username}</span></p>
+          <div class="pt-2 border-t border-slate-200 flex items-center justify-between">
+            <span class="font-bold text-emerald-600 text-xs">التوصيل: ${b.fee}</span>
+            <button onclick="openEditBranchModal('${b.id}')" class="text-purple-600 hover:text-purple-800 font-bold text-xs flex items-center gap-1 cursor-pointer">
+              <span>تعديل الفرع</span>
+              <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    // Branch Specific Renderers
+    function renderBranchStock() {
+      const tbody = document.getElementById('branch-stock-table-body');
+      tbody.innerHTML = products.map(p => `
+        <tr class="hover:bg-slate-50 transition">
+          <td class="p-3 font-bold text-slate-900">${p.nameAr}</td>
+          <td class="p-3 font-mono text-slate-600">${p.activeIngredient}</td>
+          <td class="p-3 font-mono font-bold text-emerald-700">${p.price.toFixed(2)} ج.م</td>
+          <td class="p-3">
+            <input type="number" value="${p.branchStock || 20}" onchange="updateBranchStockItem('${p.id}', this.value)" class="w-16 border border-slate-200 rounded-lg p-1 text-center font-bold bg-white"> عبوة
+          </td>
+          <td class="p-3">
+            ${(p.branchStock || 20) > 0 
+              ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">متوفر</span>'
+              : '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">نفد المخزون</span>'}
+          </td>
+          <td class="p-3 text-center">
+            <button onclick="quickToggleShortage('${p.id}')" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[10px] font-bold cursor-pointer">
+              ${p.isMarketShortage ? 'إلغاء وسم النواقص' : 'وسم كـ صنف ناقص'}
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function updateBranchStockItem(id, val) {
+      const p = products.find(x => x.id === id);
+      if (p) {
+        p.branchStock = parseInt(val) || 0;
+        renderProducts();
+      }
+    }
+
+    function renderBranchOrders() {
+      const list = document.getElementById('branch-orders-list');
+      const activeBranchId = currentAdminSession?.branchId || 'br-1';
+      const branchOrders = orders.filter(o => o.branchId === activeBranchId || !currentAdminSession?.branchId);
+
+      list.innerHTML = branchOrders.map(o => `
+        <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-black text-slate-900">${o.customerName}</span>
+              <span class="font-mono text-purple-600 font-bold">#${o.id}</span>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${o.status === 'delivered' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+                ${o.status === 'delivered' ? 'تم التسليم' : 'قيد التحضير والتوصيل'}
+              </span>
+            </div>
+            <div class="text-slate-500 text-xs mt-1">العنوان: ${o.address} • التوقيت: ${o.time}</div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="font-mono font-black text-emerald-700 text-sm">${o.total.toFixed(2)} ج.م</span>
+            <button onclick="alert('تم تعيين الطلب #${o.id} للمندوب إسلام خالد وتوليد رمز QR التسليم!')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition cursor-pointer">
+              تسليم للمندوب 🛵
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderBranchPrescriptions() {
+      const list = document.getElementById('branch-prescriptions-list');
+      list.innerHTML = prescriptions.map(r => `
+        <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="font-black text-slate-900">${r.customerName}</span>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${r.status === 'verified' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+              ${r.status === 'verified' ? 'تم التحقق الصيدلي ✓' : 'قيد المراجعة ⏳'}
+            </span>
+          </div>
+          <div class="text-xs text-slate-600">${r.doctor} • ${r.date}</div>
+          <div class="p-2.5 bg-white rounded-xl border border-slate-200 text-xs font-mono text-slate-800">
+            ${r.notes}
+          </div>
+          <div class="pt-2 flex justify-end gap-2">
+            <button onclick="alert('تمت الموافقة وصرف الروشتة وإرسال إشعار للعميل بالموافقة!')" class="px-3 py-1.5 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-700 transition cursor-pointer">
+              اعتماد وصرف الروشتة
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderBranchCouriers() {
+      const list = document.getElementById('branch-couriers-list');
+      list.innerHTML = couriers.map(c => `
+        <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl">
+          <div class="flex items-center justify-between mb-1">
+            <span class="font-bold text-slate-900">${c.name}</span>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${c.status === 'delivering' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}">
+              ${c.status === 'delivering' ? 'في مهمة توصيل' : 'متاح بالفرع'}
+            </span>
+          </div>
+          <div class="font-mono text-xs text-slate-500 mb-2">${c.phone}</div>
+          ${c.currentOrder ? `<div class="text-[11px] text-purple-700 font-bold">يقوم بتوصيل طلب: #${c.currentOrder}</div>` : '<div class="text-[11px] text-slate-400">لا توجد طلبات جارية</div>'}
+        </div>
+      `).join('');
+    }
+
+    // 4. Modals and Actions
+    let activeDrawerCustomerId = null;
+    function openCustomerDrawer(id) {
+      const c = customers.find(x => x.id === id);
+      if (!c) return;
+      activeDrawerCustomerId = id;
+      document.getElementById('drawer-customer-name').innerText = c.name;
+      document.getElementById('drawer-customer-wallet').innerText = `${c.walletBalance.toFixed(2)} ج.م`;
+      document.getElementById('drawer-customer-points').innerText = `${c.loyaltyPoints} نقطة`;
+      document.getElementById('drawer-customer-phone').innerText = c.phone;
+      document.getElementById('drawer-customer-address').innerText = c.address;
+      document.getElementById('drawer-customer-chronic').innerText = c.chronic;
+
+      // History
+      document.getElementById('drawer-order-history').innerHTML = `
+        <div class="p-2.5 border border-slate-200 rounded-xl bg-slate-50">
+          <div class="flex justify-between font-bold text-slate-800">
+            <span>طلب #ELX-9821</span>
+            <span class="text-emerald-600">تم التسليم بنجاح</span>
+          </div>
+          <div class="text-[11px] text-slate-500 mt-0.5">فرع المعادي • 280.00 ج.م • 3 أصناف</div>
+        </div>
+      `;
+      document.getElementById('customer-drawer').classList.remove('-translate-x-full');
+    }
+
+    function closeCustomerDrawer() {
+      document.getElementById('customer-drawer').classList.add('-translate-x-full');
+    }
+
+    function topUpCustomerWallet() {
+      const c = customers.find(x => x.id === activeDrawerCustomerId);
+      if (!c) return;
+      const amt = parseFloat(prompt(`شحن رصيد محفظة ${c.name} (ج.م):`, '50'));
+      if (!isNaN(amt) && amt > 0) {
+        c.walletBalance += amt;
+        openCustomerDrawer(c.id);
+        renderCustomers();
+        alert(`تم شحن ${amt} ج.م بنجاح! الرصيد الجديد: ${c.walletBalance.toFixed(2)} ج.م`);
+      }
+    }
+
+    function adjustCustomerPoints() {
+      const c = customers.find(x => x.id === activeDrawerCustomerId);
+      if (!c) return;
+      const pts = parseInt(prompt(`تعديل نقاط ولاء ${c.name} (أدخل قيمة موجبة للإضافة أو سالبة للخصم):`, '50'));
+      if (!isNaN(pts)) {
+        c.loyaltyPoints = Math.max(0, c.loyaltyPoints + pts);
+        openCustomerDrawer(c.id);
+        renderCustomers();
+        alert(`تم تعديل النقاط! الرصيد الجديد: ${c.loyaltyPoints} نقطة`);
+      }
+    }
+
+    function toggleBlockCustomer() {
+      if (!activeDrawerCustomerId) return;
+      const c = customers.find(x => x.id === activeDrawerCustomerId);
+      if (c) {
+        c.status = c.status === 'active' ? 'blocked' : 'active';
+        renderCustomers();
+        alert(`تم تغيير حالة العميل ${c.name} إلى: ${c.status === 'active' ? 'نشط' : 'محظور'}`);
+      }
+    }
+
+    function deleteCurrentDrawerCustomer() {
+      if (!activeDrawerCustomerId) return;
+      deleteCustomer(activeDrawerCustomerId);
+      closeCustomerDrawer();
+    }
+
+    function deleteCustomer(id) {
+      if (confirm('هل أنت متأكد من حذف هذا العميل وسجلاته نهائياً من المنظومة؟')) {
+        customers = customers.filter(x => x.id !== id);
+        renderCustomers();
+        updateStats();
+      }
+    }
+
+    function editCustomer(id) {
+      const c = customers.find(x => x.id === id);
+      if (!c) return;
+      const newName = prompt('تعديل اسم العميل:', c.name);
+      if (newName !== null) c.name = newName.trim() || c.name;
+      const newPhone = prompt('تعديل رقم الهاتف:', c.phone);
+      if (newPhone !== null) c.phone = newPhone.trim() || c.phone;
+      renderCustomers();
+    }
+
+    function openAddCustomerModal() {
+      const name = prompt('اسم العميل الجديد:');
+      if (!name) return;
+      const phone = prompt('رقم الهاتف:');
+      if (!phone) return;
+      customers.push({
+        id: `cust-${Date.now()}`,
+        name,
+        phone,
+        walletBalance: 25.00,
+        loyaltyPoints: 50,
+        totalOrders: 0,
+        chronic: 'لا يوجد',
+        address: 'المعادي - القاهرة',
+        status: 'active'
+      });
+      renderCustomers();
+      updateStats();
+      alert(`تم إضافة العميل ${name} بنجاح مع بونص ترحيبي 25 ج.م بالمحفظة!`);
+    }
+
+    function exportCustomersToExcel() {
+      const csvHeader = "\uFEFFالاسم,الهاتف,رصيد المحفظة,نقاط الولاء,الطلبات,الحالة,العنوان\n";
+      const csvRows = customers.map(c => `"${c.name}","${c.phone}","${c.walletBalance}","${c.loyaltyPoints}","${c.totalOrders}","${c.status}","${c.address}"`).join("\n");
+      const blob = new Blob([csvHeader + csvRows], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `elixir_customers_${Date.now()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function filterCustomers() {
+      const q = document.getElementById('customer-search-input').value.toLowerCase();
+      const rows = document.querySelectorAll('#customers-table-body tr');
+      rows.forEach(r => {
+        const text = r.innerText.toLowerCase();
+        r.style.display = text.includes(q) ? '' : 'none';
+      });
+    }
+
+    // Bulk Products Modal
+    function openBulkEditModal() {
+      const checked = document.querySelectorAll('.product-chk:checked');
+      if (checked.length === 0) {
+        alert('يرجى تحديد صنف أو أكثر أولاً من القائمة!');
+        return;
+      }
+      document.getElementById('bulk-edit-modal').classList.remove('hidden');
+    }
+
+    function closeBulkEditModal() {
+      document.getElementById('bulk-edit-modal').classList.add('hidden');
+    }
+
+    function applyBulkProductEdit() {
+      const checkedIds = Array.from(document.querySelectorAll('.product-chk:checked')).map(el => el.value);
+      const origin = document.getElementById('bulk-origin-select').value;
+      const shortage = document.getElementById('bulk-shortage-select').value;
+      const discount = parseFloat(document.getElementById('bulk-discount-input').value);
+
+      products.forEach(p => {
+        if (checkedIds.includes(p.id)) {
+          if (origin) p.origin = origin;
+          if (shortage !== '') p.isMarketShortage = (shortage === 'true');
+          if (!isNaN(discount) && discount > 0) {
+            p.price = p.price * (1 - (discount / 100));
+          }
+        }
+      });
+
+      renderProducts();
+      renderBranchStock();
+      updateStats();
+      closeBulkEditModal();
+      alert(`تم تطبيق التعديلات بنجاح على ${checkedIds.length} صنف! تم تصفير نقاط الولاء للأصناف الشحيحة.`);
+    }
+
+    function toggleSelectAllProducts(master) {
+      document.querySelectorAll('.product-chk').forEach(c => c.checked = master.checked);
+    }
+
+    function toggleSelectAllCustomers(master) {
+      document.querySelectorAll('.customer-chk').forEach(c => c.checked = master.checked);
+      updateCustomerSelection();
+    }
+
+    function updateCustomerSelection() {
+      const checked = document.querySelectorAll('.customer-chk:checked');
+      const delBtn = document.getElementById('bulk-delete-btn');
+      if (checked.length > 0) {
+        delBtn.classList.remove('hidden');
+        delBtn.querySelector('span').innerText = `حذف المحدد (${checked.length})`;
+      } else {
+        delBtn.classList.add('hidden');
+      }
+    }
+
+    function bulkDeleteCustomers() {
+      const checkedIds = Array.from(document.querySelectorAll('.customer-chk:checked')).map(el => el.value);
+      if (confirm(`هل أنت متأكد من حذف ${checkedIds.length} عميل محدد نهائياً؟`)) {
+        customers = customers.filter(c => !checkedIds.includes(c.id));
+        renderCustomers();
+        updateCustomerSelection();
+        updateStats();
+      }
+    }
+
+    function openAddProductModal() {
+      const name = prompt('اسم الدواء أو الصنف الجديد:');
+      if (!name) return;
+      const activeIng = prompt('المادة الفعالة والتركيز:', 'Paracetamol 500mg');
+      const price = parseFloat(prompt('السعر (ج.م):', '50')) || 50;
+      products.push({
+        id: `prod-${Date.now()}`,
+        nameAr: name,
+        activeIngredient: activeIng,
+        price: price,
+        origin: 'local_medicine',
+        isMarketShortage: false,
+        branchStock: 30
+      });
+      renderProducts();
+      renderBranchStock();
+      updateStats();
+      alert(`تمت إضافة الصنف ${name} بنجاح!`);
+    }
+
+    // Branch Modal
+    let activeEditingBranchId = null;
+    function openAddBranchModal() {
+      activeEditingBranchId = null;
+      document.getElementById('branch-modal-title').innerText = 'إضافة فرع جديد لصيدليات الإكسير';
+      document.getElementById('branch-name-input').value = '';
+      document.getElementById('branch-manager-input').value = '';
+      document.getElementById('branch-phone-input').value = '01070622622';
+      document.getElementById('branch-radius-input').value = '8.0';
+      document.getElementById('branch-fee-input').value = 'مجاني';
+      document.getElementById('branch-lat-input').value = '30.0444';
+      document.getElementById('branch-lng-input').value = '31.2357';
+      document.getElementById('branch-modal').classList.remove('hidden');
+    }
+
+    function openEditBranchModal(id) {
+      activeEditingBranchId = id;
+      const b = branches.find(x => x.id === id);
+      if (!b) return;
+      document.getElementById('branch-modal-title').innerText = `تعديل ${b.nameAr}`;
+      document.getElementById('branch-name-input').value = b.nameAr;
+      document.getElementById('branch-manager-input').value = b.manager;
+      document.getElementById('branch-phone-input').value = b.phone;
+      document.getElementById('branch-radius-input').value = parseFloat(b.radius) || 8.5;
+      document.getElementById('branch-fee-input').value = b.fee;
+      document.getElementById('branch-lat-input').value = b.lat || '29.9602';
+      document.getElementById('branch-lng-input').value = b.lng || '31.2778';
+      document.getElementById('branch-modal').classList.remove('hidden');
+    }
+
+    function closeBranchModal() {
+      document.getElementById('branch-modal').classList.add('hidden');
+    }
+
+    function saveBranchModal() {
+      const name = document.getElementById('branch-name-input').value.trim();
+      const manager = document.getElementById('branch-manager-input').value.trim();
+      const phone = document.getElementById('branch-phone-input').value.trim();
+      const radius = document.getElementById('branch-radius-input').value.trim() + ' كم';
+      const fee = document.getElementById('branch-fee-input').value.trim() || 'مجاني';
+      const lat = parseFloat(document.getElementById('branch-lat-input').value) || 29.9602;
+      const lng = parseFloat(document.getElementById('branch-lng-input').value) || 31.2778;
+
+      if (!name) {
+        alert('يرجى إدخال اسم الفرع!');
+        return;
+      }
+
+      if (activeEditingBranchId) {
+        const b = branches.find(x => x.id === activeEditingBranchId);
+        if (b) {
+          b.nameAr = name;
+          b.manager = manager || 'د. مدير الفرع';
+          b.phone = phone || '01070622622';
+          b.radius = radius;
+          b.fee = fee;
+          b.lat = lat;
+          b.lng = lng;
+        }
+        alert(`تم تحديث بيانات ${name} بنجاح!`);
+      } else {
+        const branchCount = branches.length + 1;
+        branches.push({
+          id: `br-${Date.now()}`,
+          nameAr: name.startsWith('صيدليات الإكسير') ? name : `صيدليات الإكسير - ${name}`,
+          manager: manager || 'د. مدير الفرع',
+          username: `manager_branch_${branchCount}`,
+          phone: phone || '01070622622',
+          radius,
+          fee,
+          lat,
+          lng,
+          hours: '24/7'
+        });
+        alert(`تمت إضافة الفرع الجديد ${name} بنجاح!`);
+      }
+
+      renderBranches();
+      closeBranchModal();
+      updateStats();
+    }
+
+    function saveLoyaltySettings() {
+      alert('تم حفظ إعدادات نقاط الولاء ونواقص السوق بنجاح وتحديث السيرفر المركزي!');
+    }
+
+    function openBranchAddStockModal() {
+      openAddProductModal();
+    }
+
+    // Initialization on Page Load
+    window.addEventListener('DOMContentLoaded', () => {
+      const saved = sessionStorage.getItem('elixir_admin_session');
+      if (saved) {
+        try {
+          currentAdminSession = JSON.parse(saved);
+          applySession();
+        } catch (e) {
+          sessionStorage.removeItem('elixir_admin_session');
+          currentAdminSession = null;
+        }
+      }
+      lucide.createIcons();
+    });
+  </script>
 </body>
 </html>
